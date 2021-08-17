@@ -12,13 +12,13 @@ import javax.sql.DataSource;
 @Configuration
 public class DataBaseHerokuConfig {
 
-    @Value("${spring.datasource.url}")
+    @Value("${heroku.datasource.url}")
     private String dbUrl;
 
-    @Value("${spring.datasource.username}")
+    @Value("${heroku.datasource.username}")
     private String userName;
 
-    @Value("${spring.datasource.password}")
+    @Value("${heroku.datasource.password}")
     private String password;
 
 
