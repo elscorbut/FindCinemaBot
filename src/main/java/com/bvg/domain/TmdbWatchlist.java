@@ -14,7 +14,7 @@ import java.util.Date;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "TMDB_WATCHLIST", schema = "tg_data")
+@Table(name = "TMDB_WATCHLIST")
 public class TmdbWatchlist {
 
     @Id
