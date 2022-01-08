@@ -16,6 +16,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,7 +40,7 @@ public class KpService {
     private static final int ITEMS_PER_PAGE = 200;
     private static final String KP_WISH_LIST_URL = "https://www.kinopoisk.ru/user/" + KP_USER_ID + "/movies/list/type/3575/sort/default/vector/desc/perpage/" + ITEMS_PER_PAGE + "/page/%s/#list";
     private static final String KP_IMAGE_URL = "https://st.kp.yandex.net/images/sm_film/%s.jpg";
-    private static final String PATH_TO_CHROMEDRIVER = "/driver/chromedriver.exe";
+    private static final String PATH_TO_CHROMEDRIVER = "src/main/resources/driver/chromedriver.exe";
 
     @Autowired
     IMovieRepository movieRepository;
@@ -93,7 +94,7 @@ public class KpService {
     }
 
     private WebDriver getWebDriver() {
-        System.setProperty("webdriver.chrome.driver", KpService.class.getResource(PATH_TO_CHROMEDRIVER).getPath());
+        System.setProperty("webdriver.chrome.driver", new ClassPathResource(PATH_TO_CHROMEDRIVER).getPath());
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
         return new ChromeDriver(options);
