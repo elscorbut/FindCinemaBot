@@ -1,8 +1,6 @@
 package com.bvg.component;
 
 import com.bvg.config.BotConfig;
-import com.bvg.dto.TMDBWatchListDto;
-import com.bvg.service.TMDBService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,14 +11,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class FindCinemaBot extends TelegramLongPollingBot {
-
-    @Autowired
-    private TMDBService tmdbService;
 
     @Autowired
     private BotConfig botConfig;
@@ -49,13 +43,11 @@ public class FindCinemaBot extends TelegramLongPollingBot {
                     .text(update.getMessage().getText())
                     .build();
             if (update.getMessage().getText().contains("Привет"))
-                message.setText("Привет," + userName);
+                message.setText("Привет, " + userName);
             if (update.getMessage().getText().contains("Пока"))
                 message.setText("Пока, " + userName);
             if (update.getMessage().getText().contains("Покажи список")) {
-                TMDBWatchListDto watchList = tmdbService.getWatchList();
-                filmTitles = watchList.getResults().stream().map(TMDBWatchListDto.TMDBWatchListFilmDto::getTitle).collect(Collectors.toList());
-                message.setText(String.join(", ", filmTitles));
+                message.setText("Запрос пока не обрабатывается");
             }
             // Call method to send the message
             try {
