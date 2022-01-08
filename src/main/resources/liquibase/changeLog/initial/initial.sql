@@ -161,6 +161,9 @@ insert into public.t_directory (id, display_name, name)
 values (nextval('t_directory_id_seq'), 'Тип', 'TYPE');
 
 --changeset admin:20211017-7 splitStatements:false stripComments:false
+--Действия в скрипте на heroku выполнены вручную, так как нет прав для копирования. Для выполнения на других контурах необходимо убрать preCondition
+--preconditions onFail:MARK_RAN
+--precondition-sql-check expectedResult:0 select count(*) from public.t_directory where name = 'COUNTRY'
 BEGIN;
 create temporary table temp_json (values text) on commit drop;
 COPY temp_json FROM PROGRAM 'curl "https://data.gov.ru/sites/default/files/opendata/7710168515-ObscherossiyskiyklassifikatorstranmiraOXM/data-2016-09-21T00-00-00-structure-2016-09-21T00-00-00.json"';

@@ -39,7 +39,7 @@ public class KpService {
     private static final int ITEMS_PER_PAGE = 200;
     private static final String KP_WISH_LIST_URL = "https://www.kinopoisk.ru/user/" + KP_USER_ID + "/movies/list/type/3575/sort/default/vector/desc/perpage/" + ITEMS_PER_PAGE + "/page/%s/#list";
     private static final String KP_IMAGE_URL = "https://st.kp.yandex.net/images/sm_film/%s.jpg";
-    private static final String PATH_TO_CHROMEDRIVER = "D:/Progr projects/TelegramBot/src/main/resources/driver/chromedriver.exe";
+    private static final String PATH_TO_CHROMEDRIVER = "/driver/chromedriver.exe";
 
     @Autowired
     IMovieRepository movieRepository;
@@ -93,7 +93,7 @@ public class KpService {
     }
 
     private WebDriver getWebDriver() {
-        System.setProperty("webdriver.chrome.driver", PATH_TO_CHROMEDRIVER);
+        System.setProperty("webdriver.chrome.driver", KpService.class.getResource(PATH_TO_CHROMEDRIVER).getPath());
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
         return new ChromeDriver(options);
