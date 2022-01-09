@@ -29,7 +29,7 @@ public class MainController {
     }
 
     @Operation(summary = "Принудительная синхронизация списка фильмов")
-    @GetMapping("/kp")
+    @GetMapping("/kp-wish-list")
     public void getKpWishList() throws InterruptedException {
         kpService.updateKpWishList();
     }
