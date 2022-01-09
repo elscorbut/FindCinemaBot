@@ -70,7 +70,7 @@ public class KpService {
         Map<Long, Movie> currentMap = movieRepository.findAll().stream().collect(Collectors.toMap(Movie::getId, m -> m));
         Map<Long, Movie> newMap = new HashMap<>();
         int i = 1;
-        while (i == 1) {
+        while (true) {
             try {
                 driver.get(String.format(KP_WISH_LIST_URL, i));
                 WebDriverWait wait = new WebDriverWait(driver, 25);
@@ -83,7 +83,6 @@ public class KpService {
                 System.out.println("Последняя страница");
                 break;
             }
-            System.out.println("driver.getPageSource(): " + driver.getPageSource());
             Document doc = Jsoup.parse(driver.getPageSource());
             Elements wishList = doc.select("#itemList li");
             for (Element wishListItem : wishList) {
@@ -91,9 +90,8 @@ public class KpService {
                 Movie movie = movieRepository.findById(movieId).orElse(new Movie(movieId));
                 copyFields(movie, wishListItem);
                 newMap.put(movieId, movie);
-                System.out.println("movieId: " + movieId);
             }
-            System.out.println("страница:" + i);
+            System.out.println("страница: " + i);
             i++;
             // Случайный интервал между запросами (2-10 сек.)
             TimeUnit.SECONDS.sleep((long) (2 + Math.random() * 10));
@@ -108,8 +106,6 @@ public class KpService {
     }
 
     private WebDriver getChromeWebDriver() {
-//        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
-//        System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
         System.setProperty("webdriver.chrome.driver", System.getenv("CHROMEDRIVER_PATH"));
         ChromeOptions options = new ChromeOptions();
         options.setBinary(System.getenv("GOOGLE_CHROME_BIN"));
@@ -124,7 +120,7 @@ public class KpService {
 
         FirefoxOptions options = new FirefoxOptions();
 
-//        options.setBinary(this.fireFoxDriver);
+        options.addPreference("javascript.enabled", false);
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
@@ -136,6 +132,7 @@ public class KpService {
 
         FirefoxOptions options = new FirefoxOptions();
 
+        options.addPreference("javascript.enabled", false);
         options.setBinary(System.getenv("FIREFOX_BIN"));
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
