@@ -75,11 +75,13 @@ public class KpService {
             }
             Document doc = Jsoup.parse(driver.getPageSource());
             Elements wishList = doc.select("#itemList li");
+            System.out.println("wishList: " + wishList);
             for (Element wishListItem : wishList) {
                 Long movieId = getMovieId(wishListItem);
                 Movie movie = movieRepository.findById(movieId).orElse(new Movie(movieId));
                 copyFields(movie, wishListItem);
                 newMap.put(movieId, movie);
+                System.out.println("movieId: " + movieId);
             }
             System.out.println("страница:" + i);
             i++;
