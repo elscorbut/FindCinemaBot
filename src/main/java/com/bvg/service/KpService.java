@@ -39,7 +39,7 @@ public class KpService {
 
     private static final String KP_HOST = "https://www.kinopoisk.ru";
     private static final int KP_USER_ID = 3218694;
-    private static final int ITEMS_PER_PAGE = 200;
+    private static final int ITEMS_PER_PAGE = 10;
     private static final String KP_WISH_LIST_URL = "https://www.kinopoisk.ru/user/" + KP_USER_ID + "/movies/list/type/3575/sort/default/vector/desc/perpage/" + ITEMS_PER_PAGE + "/page/%s/#list";
     private static final String KP_IMAGE_URL = "https://st.kp.yandex.net/images/sm_film/%s.jpg";
     private static final String PATH_TO_CHROMEDRIVER = "/driver/chromedriver.exe";
@@ -68,8 +68,8 @@ public class KpService {
         while (i == 1) {
             try {
                 driver.get(String.format(KP_WISH_LIST_URL, i));
-                WebDriverWait wait = new WebDriverWait(driver, 10);
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#itemList li")));
+                WebDriverWait wait = new WebDriverWait(driver, 25);
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("body")));
             } catch (Exception e) {
                 throw new AnyServiceException("Ошибка при получении страницы КП: " + e.getMessage(), e);
             }
