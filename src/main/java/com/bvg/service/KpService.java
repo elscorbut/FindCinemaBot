@@ -45,6 +45,7 @@ public class KpService {
     private static final String KP_WISH_LIST_URL = "https://www.kinopoisk.ru/user/" + KP_USER_ID + "/movies/list/type/3575/sort/default/vector/desc/perpage/" + ITEMS_PER_PAGE + "/page/%s/#list";
     private static final String KP_IMAGE_URL = "https://st.kp.yandex.net/images/sm_film/%s.jpg";
     private static final String PATH_TO_CHROME_DRIVER = "/driver/chromedriver.exe";
+    // https://www.kinopoisk.ru/user/3218694/movies/list/type/3575/sort/default/vector/desc/perpage/200/page/1/#list"
 
     @Autowired
     IMovieRepository movieRepository;
@@ -78,6 +79,8 @@ public class KpService {
             } catch (Exception e) {
                 throw new AnyServiceException("Ошибка при получении страницы КП: " + e.getMessage(), e);
             }
+            System.out.println("Номер страницы: " + i);
+            System.out.println("Текущий url: " + driver.getCurrentUrl());
             if (driver.getCurrentUrl().contains("await")) {
                 driver.quit();
                 System.out.println("Последняя страница");
