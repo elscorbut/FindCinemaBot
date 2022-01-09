@@ -35,4 +35,10 @@ public class AnyConfig {
 
         return resource.getURL().getPath();
     }
+
+    @Bean("fireFoxDriver")
+    String getFireFoxDriverPath(@Value("${driver.firefoxdriver}") Resource resource) throws IOException {
+
+        return resource.getURL().getPath();
+    }
 }

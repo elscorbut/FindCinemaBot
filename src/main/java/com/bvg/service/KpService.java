@@ -15,6 +15,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +41,10 @@ public class KpService {
 
     private static final String KP_HOST = "https://www.kinopoisk.ru";
     private static final int KP_USER_ID = 3218694;
-    private static final int ITEMS_PER_PAGE = 10;
+    private static final int ITEMS_PER_PAGE = 200;
     private static final String KP_WISH_LIST_URL = "https://www.kinopoisk.ru/user/" + KP_USER_ID + "/movies/list/type/3575/sort/default/vector/desc/perpage/" + ITEMS_PER_PAGE + "/page/%s/#list";
     private static final String KP_IMAGE_URL = "https://st.kp.yandex.net/images/sm_film/%s.jpg";
-    private static final String PATH_TO_CHROMEDRIVER = "/driver/chromedriver.exe";
+    private static final String PATH_TO_CHROME_DRIVER = "/driver/chromedriver.exe";
 
     @Autowired
     IMovieRepository movieRepository;
@@ -60,8 +62,11 @@ public class KpService {
     @Autowired
     String chromeDriver;
 
+    @Autowired
+    String fireFoxDriver;
+
     public void updateKpWishList() throws InterruptedException {
-        WebDriver driver = getWebDriver();
+        WebDriver driver = getFireFoxWebDriver();
         Map<Long, Movie> currentMap = movieRepository.findAll().stream().collect(Collectors.toMap(Movie::getId, m -> m));
         Map<Long, Movie> newMap = new HashMap<>();
         int i = 1;
@@ -102,13 +107,45 @@ public class KpService {
         movieRepository.saveAll(newMap.values());
     }
 
-    private WebDriver getWebDriver() {
+    private WebDriver getChromeWebDriver() {
 //        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
 //        System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
         System.setProperty("webdriver.chrome.driver", System.getenv("CHROMEDRIVER_PATH"));
-//        System.setProperty("webdriver.chrome.driver", this.chromeDriver);
         ChromeOptions options = new ChromeOptions();
         options.setBinary(System.getenv("GOOGLE_CHROME_BIN"));
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
+        return new ChromeDriver(options);
+    }
+
+    private WebDriver getLocalFireFoxWebDriver() {
+        System.setProperty("webdriver.gecko.driver", this.fireFoxDriver);
+
+        FirefoxOptions options = new FirefoxOptions();
+
+//        options.setBinary(this.fireFoxDriver);
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
+        return new FirefoxDriver(options);
+    }
+
+    private WebDriver getFireFoxWebDriver() {
+        System.setProperty("webdriver.gecko.driver", System.getenv("GECKODRIVER_PATH"));
+
+        FirefoxOptions options = new FirefoxOptions();
+
+        options.setBinary(System.getenv("FIREFOX_BIN"));
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
+        return new FirefoxDriver(options);
+    }
+
+    private WebDriver getLocalChromeWebDriver() {
+        System.setProperty("webdriver.chrome.driver", this.chromeDriver);
+        ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
