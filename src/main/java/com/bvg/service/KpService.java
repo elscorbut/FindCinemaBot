@@ -11,9 +11,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -65,6 +68,8 @@ public class KpService {
         while (i == 1) {
             try {
                 driver.get(String.format(KP_WISH_LIST_URL, i));
+                WebDriverWait wait = new WebDriverWait(driver, 10);
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#itemList li")));
             } catch (Exception e) {
                 throw new AnyServiceException("Ошибка при получении страницы КП: " + e.getMessage(), e);
             }
@@ -73,9 +78,9 @@ public class KpService {
                 System.out.println("Последняя страница");
                 break;
             }
+            System.out.println("driver.getPageSource(): " + driver.getPageSource());
             Document doc = Jsoup.parse(driver.getPageSource());
             Elements wishList = doc.select("#itemList li");
-            System.out.println("wishList: " + wishList);
             for (Element wishListItem : wishList) {
                 Long movieId = getMovieId(wishListItem);
                 Movie movie = movieRepository.findById(movieId).orElse(new Movie(movieId));
@@ -101,6 +106,7 @@ public class KpService {
 //        System.setProperty("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome");
 //        System.setProperty("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver");
         System.setProperty("webdriver.chrome.driver", System.getenv("CHROMEDRIVER_PATH"));
+//        System.setProperty("webdriver.chrome.driver", this.chromeDriver);
         ChromeOptions options = new ChromeOptions();
         options.setBinary(System.getenv("GOOGLE_CHROME_BIN"));
         options.addArguments("--no-sandbox");
