@@ -17,6 +17,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,11 +81,16 @@ public class KpService {
             } catch (Exception e) {
                 throw new AnyServiceException("Ошибка при получении страницы КП: " + e.getMessage(), e);
             }
-            System.out.println("Номер страницы: " + i);
+            System.out.println("Начало обработки страницы: " + i);
             System.out.println("Текущий url: " + driver.getCurrentUrl());
             if (driver.getCurrentUrl().contains("await")) {
                 driver.quit();
                 System.out.println("Последняя страница");
+                break;
+            }
+            if (driver.getCurrentUrl().contains("showcaptcha")) {
+                driver.quit();
+                System.out.println("Редирект на showcaptcha");
                 break;
             }
             Document doc = Jsoup.parse(driver.getPageSource());
@@ -94,7 +101,7 @@ public class KpService {
                 copyFields(movie, wishListItem);
                 newMap.put(movieId, movie);
             }
-            System.out.println("страница: " + i);
+            System.out.println("Страница обработана: " + i);
             i++;
             // Случайный интервал между запросами (2-10 сек.)
             TimeUnit.SECONDS.sleep((long) (2 + Math.random() * 10));
@@ -121,9 +128,20 @@ public class KpService {
     private WebDriver getLocalFireFoxWebDriver() {
         System.setProperty("webdriver.gecko.driver", this.fireFoxDriver);
 
-        FirefoxOptions options = new FirefoxOptions();
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setJavascriptEnabled(false);
 
-        options.addPreference("javascript.enabled", false);
+        FirefoxProfile p = new FirefoxProfile();
+        p.setPreference("javascript.enabled", false);
+
+//        FirefoxProfile profile = new FirefoxProfile();
+//        profile.setPreference("javascript.enabled", false);
+
+        FirefoxOptions options = new FirefoxOptions();
+        options.merge(capabilities);
+        options.setProfile(p);
+
+//        options.setCapability("javascript.enabled", false);
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1200", "--ignore-certificate-errors", "--silent");
