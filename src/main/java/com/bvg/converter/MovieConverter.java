@@ -29,7 +29,7 @@ public class MovieConverter {
     private void setPosterLinks (MovieDto response, String posterId) {
 
         for (EPoster poster : EPoster.values()) {
-            response.getPosterLinks().put(poster, String.format(poster.getLink(), posterId));
+            response.getPosterLinks().put(poster, posterId != null ? String.format(poster.getLink(), posterId) : null);
         }
     }
 }
